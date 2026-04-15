@@ -46,8 +46,8 @@ BLEServer *pServer = NULL;
 
 // --- АППАРАТНЫЙ ТАЙМЕР ---
 hw_timer_t * waitTimer = NULL;
-volatile bool waitTimerTriggered = false; 
-volatile bool waitDirectionForward = true;
+volatile bool waitTimerTriggered = false;
+volatile bool waitDirectionForward = true; 
 
 )
 void IRAM_ATTR onWaitTimer() {
@@ -118,12 +118,11 @@ class MyCallbacks: public BLECharacteristicCallbacks {
               // Создаем таймер: частота 1 000 000 Гц 
               waitTimer = timerBegin(1000000); 
               // Привязываем функцию-прерывание
+              //Когда таймер waitTimer досчитает до нужного числа, выполняем функцию onWaitTimer и возвращаемся назад
               timerAttachInterrupt(waitTimer, &onWaitTimer);
               
               waitDirectionForward = isForward;
-              waitTimerTriggered = false; 
-              
-              
+              waitTimerTriggered = false;
               
               timerAlarm(waitTimer, (uint64_t)waitSeconds * 1000000ULL, false, 0);
               Serial.println("[TIMER] Таймер запущен!");
@@ -246,12 +245,12 @@ void startBluetoothConfig() {
   WiFi.mode(WIFI_OFF); delay(100);
   isBleActive = true;
   pServer->getAdvertising()->start();
-  Serial.println("[BLE] Реклама включена.");
+  Serial.println("[BLE] Блютуз включен.");
 }
 
 void stopBluetoothConfig() {
   pServer->getAdvertising()->stop();
   isBleActive = false;
   if (WiFi.status() != WL_CONNECTED) WiFi.begin(ssid, pass);
-  Serial.println("[BLE] Реклама выключена.");
+  Serial.println("[BLE] Блютуз выключен.");
 }
